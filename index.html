@@ -10,112 +10,185 @@
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
 <style>
-  :root { --ill-base: url("_ds/f-lix-design-system-f7e7a69b-3215-41c2-a457-b1dfa4aa56e1/assets/illustrations/"); }
-  body { margin: 0; background: #eae6e0; font-family: var(--font-sans); color: #082422; }
-  a { color: #10a8a7; text-decoration: none; }
-  a:hover { color: #082422; }
+  /* Values below track the Figma canvas "🟦 Error handling" (node 4683:204244).
+     Tokens come from _ds; anything not tokenised there is annotated with its Figma source. */
+  :root {
+    --text-body: #3c4444;        /* Figma mapped/text/body — not in _ds/tokens */
+    --screen-decline: #fff5ef;   /* color/interactive/danger/--disabled */
+    --btn-h: 47px;               /* py 12 + 18px/1.3 label */
+  }
+  body { margin: 0; background: #eae6e0; font-family: var(--font-sans); color: var(--foreground); }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { color: var(--foreground); }
 
   .shell { display: flex; gap: 32px; align-items: flex-start; justify-content: center; padding: 48px 32px; min-height: 100vh; box-sizing: border-box; }
 
   /* ── Demo rail (not part of the product surface) ── */
   .rail { width: 300px; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 48px; }
   .rail h1 { margin: 0; font-family: var(--font-sans); font-size: 22px; font-weight: 700; letter-spacing: -.01em; line-height: 1.2; }
-  .rail p.lede { margin: 0; font-size: 13px; line-height: 1.5; color: #3f5a58; }
-  .rail .group-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #877867; }
+  .rail p.lede { margin: 0; font-size: 13px; line-height: 1.5; color: var(--slate-500); }
+  .rail .group-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--mocha); }
   .scenarios { display: flex; flex-direction: column; gap: 6px; }
-  .scenario { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid #cfcabf; background: #fefcf9; font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: #082422; cursor: pointer; text-align: left; transition: border-color .15s, background .15s; }
-  .scenario:hover { border-color: #877867; }
-  .scenario[data-active="true"] { border-color: #082422; background: #fff; }
-  .scenario .code { flex-shrink: 0; display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: #082422; color: #2bf2f1; font-size: 10px; font-weight: 700; letter-spacing: .06em; }
+  .scenario { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--linen); font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--foreground); cursor: pointer; text-align: left; transition: border-color .15s, background .15s; }
+  .scenario:hover { border-color: var(--mocha); }
+  .scenario[data-active="true"] { border-color: var(--foreground); background: #fff; }
+  .scenario .code { flex-shrink: 0; display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 999px; background: var(--foreground); color: var(--turquoise); font-size: 10px; font-weight: 700; letter-spacing: .06em; }
   .log { display: flex; flex-direction: column; gap: 4px; max-height: 240px; overflow-y: auto; }
-  .log .entry { font-size: 12px; line-height: 1.45; color: #3f5a58; padding: 5px 10px; background: #fefcf9; border-radius: 8px; border: 1px solid #e5e0d8; }
-  .log .entry.exit { background: #d4fffe; border-color: #a8fffe; color: #065958; font-weight: 500; }
-  .log .entry .st { font-weight: 700; color: #0f8c8b; }
+  .log .entry { font-size: 12px; line-height: 1.45; color: var(--slate-500); padding: 5px 10px; background: var(--linen); border-radius: 8px; border: 1px solid #e5e0d8; }
+  .log .entry.exit { background: var(--turquoise-100); border-color: var(--turquoise-200); color: var(--turquoise-800); font-weight: 500; }
+  .log .entry .st { font-weight: 700; color: var(--turquoise-700); }
 
-  /* ── Phone frame ── */
+  /* ── Phone frame — Figma artboard is 390 × 840 ── */
   .phone-wrap { display: flex; flex-direction: column; gap: 10px; }
   .phone-state { display: flex; align-items: baseline; gap: 8px; height: 18px; }
-  .phone-state .code { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #10a8a7; }
+  .phone-state .code { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--turquoise-600); }
   .phone-state .name { font-size: 14px; font-weight: 600; }
-  .phone { width: 390px; height: 760px; background: #fefcf9; border: 1px solid #cfcabf; border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; position: relative; }
-  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; animation: var(--animate-fade-in); }
+  .phone { width: 390px; height: 840px; border: 1px solid var(--border); border-radius: 24px; overflow: hidden; position: relative; background: var(--background); }
+  .screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--background); animation: var(--animate-fade-in); }
+  .screen[data-bg="decline"] { background: var(--screen-decline); }
+  .screen[data-bg="dark"]    { background: var(--foreground); }
 
-  /* Shared screen chrome */
-  .topbar { height: 48px; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; gap: 12px; }
+  /* ── iOS status bar (Figma "iOS" instance, 50px) ── */
+  .ios { height: 50px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 17px; font-weight: 600; letter-spacing: -.408px; color: var(--text-body); }
+  .ios .sig { display: flex; align-items: center; gap: 6px; font-size: 15px; }
+  [data-bg="dark"] .ios { color: var(--linen); }
+
+  /* ── Shared screen chrome ── */
+  .topbar { height: 48px; display: flex; align-items: center; padding: 0 20px; flex-shrink: 0; }
   .topbar--end { justify-content: flex-end; }
-  .topbar--split { justify-content: space-between; }
-  .chip-btn { width: 36px; height: 36px; border-radius: 999px; background: #efebe7; border: none; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #082422; cursor: pointer; padding: 0; transition: background .15s; }
-  .chip-btn:hover { background: #ddd9cf; }
-  .topbar .title { font-size: 15px; font-weight: 600; }
-  .topbar .spacer { width: 36px; }
+  .x-btn { background: none; border: none; padding: 0; font-size: 20px; line-height: 1; color: var(--foreground); cursor: pointer; }
 
-  .hero { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding: 32px 24px 0; min-height: 0; }
-  .hero h2 { margin: 0; font-family: var(--font-sans); font-size: 28px; font-weight: 700; line-height: 1.2; letter-spacing: -.01em; }
-  .hero p { margin: 0; font-size: 16px; line-height: 1.5; color: #3f5a58; text-wrap: pretty; }
-  .footer { display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 24px; flex-shrink: 0; }
+  .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; padding: 32px 24px 0; min-height: 0; overflow: hidden; }
+  .actions { display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 24px; flex-shrink: 0; }
 
-  .method-card { width: 100%; display: flex; align-items: center; gap: 12px; background: #efebe7; border-radius: 16px; padding: 14px 16px; text-align: left; margin-top: 4px; box-sizing: border-box; }
-  .method-card--error { background: #fff5ef; }
-  .method-card .badge-ic { width: 40px; height: 40px; border-radius: 999px; background: #fefcf9; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #082422; flex-shrink: 0; }
-  .method-card--error .badge-ic { color: #a03808; }
-  .method-card .m-title { font-size: 15px; font-weight: 600; color: #082422; }
-  .method-card .m-sub { font-size: 13px; color: #877867; }
-  .method-card--error .m-sub { color: #a03808; }
-  .method-card .col { display: flex; flex-direction: column; gap: 2px; }
+  /* Figma Text/Display MD + Text/Body */
+  .t-display { margin: 0; font-family: var(--font-heading); font-size: 28px; font-weight: 800; line-height: 1.1; letter-spacing: -1px; color: var(--foreground); }
+  .t-body { margin: 0; font-size: 16px; line-height: 1.2; color: var(--text-body); text-wrap: pretty; }
 
-  /* Picker (S1) */
-  .pick-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; border: 1px solid #cfcabf; background: #fefcf9; cursor: pointer; font-family: var(--font-sans); text-align: left; width: 100%; box-sizing: border-box; transition: border-color .15s; }
-  .pick-row:hover { border-color: #877867; }
-  .pick-row[data-disabled="true"] { background: #efebe7; opacity: .6; cursor: default; pointer-events: none; }
-  .pick-row[data-selected="true"] { border: 1.5px solid #082422; padding: 13.5px 15.5px; }
-  .pick-row[data-add="true"] { border-style: dashed; }
-  .pick-row .badge-ic { width: 40px; height: 40px; border-radius: 999px; background: #efebe7; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; color: #082422; }
-  .pick-row[data-disabled="true"] .badge-ic { background: #fefcf9; }
-  .pick-row .check { margin-left: auto; width: 22px; height: 22px; border-radius: 999px; background: #2bf2f1; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #082422; }
+  /* Button geometry in the canvas is px 20 / py 12 with an 18px Saans Regular label. */
+  .fx-btn--figma { height: var(--btn-h); padding: 0 20px; font-size: 18px; font-weight: 400; line-height: 1.3; box-shadow: none; }
+  .fx-btn--figma.fx-btn--primary { box-shadow: none; }
 
-  /* Amount editor (E5) */
-  .amount-box { display: flex; align-items: center; gap: 8px; height: 64px; padding: 0 18px; border-radius: 16px; background: #fefcf9; border: 1.5px solid #2bf2f1; box-shadow: 0 0 0 6px rgba(43,242,241,.1); }
-  .amount-box--error { border-color: #f26629; box-shadow: none; }
-  .amount-box input { border: none; outline: none; background: transparent; font-family: var(--font-sans); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.02em; color: #082422; width: 100%; min-width: 0; padding: 0; }
-  .amount-box--error input { color: #a03808; }
-  .amount-box .cur { font-size: 15px; font-weight: 600; color: #877867; margin-left: auto; flex-shrink: 0; }
-  .amt-chip { display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; background: #efebe7; color: #082422; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; border: none; cursor: pointer; font-family: var(--font-sans); transition: background .15s; }
-  .amt-chip:hover { background: #ddd9cf; }
-  .amt-chip--rec { background: #082422; color: #fefcf9; }
-  .amt-chip--rec:hover { background: #152b2a; }
+  /* ── Instrument alert (Figma "Alert", E1-A / E1-B / E2) ── */
+  .inst { display: flex; align-items: center; gap: 4px; width: 100%; box-sizing: border-box; background: var(--background); border: 1px solid var(--border); border-radius: 16px; padding: 12px; box-shadow: var(--shadow-lg); text-align: left; }
+  .inst--error { border-color: var(--destructive); }
+  .inst__logo { width: 60px; height: 60px; flex-shrink: 0; display: flex; align-items: center; padding: 4px; box-sizing: border-box; }
+  .inst__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+  .inst__title { font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--foreground); }
+  .inst--error .inst__title { color: var(--orange-600); }
+  .inst__meta { display: flex; align-items: center; gap: 4px; padding: 0 4px; font-size: 12px; line-height: 1.2; letter-spacing: .25px; color: var(--foreground); }
+  .inst--error .inst__meta { color: var(--destructive); }
 
-  /* TBD placeholder (E3-B / E6-B) */
-  .tbd-frame { flex: 1; border: 1.5px dashed #cfcabf; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 0 32px; background: repeating-linear-gradient(135deg, #fefcf9, #fefcf9 10px, #f6f2ed 10px, #f6f2ed 20px); }
-  .tbd-pill { display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 999px; background: #fffce0; color: #665500; font-size: 11px; font-weight: 700; letter-spacing: .08em; }
-  .tbd-frame .t-title { font-size: 17px; font-weight: 600; line-height: 1.35; }
-  .tbd-frame .t-desc { font-size: 14px; line-height: 1.5; color: #877867; }
-  .sim-row { display: flex; gap: 8px; }
-  .sim-btn { height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid #cfcabf; background: #fefcf9; font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: #082422; cursor: pointer; }
-  .sim-btn:hover { border-color: #877867; }
+  /* Mastercard mark — two overlapping circles, exactly as drawn in Figma (52px box) */
+  .mc { position: relative; width: 52px; height: 52px; }
+  .mc i { position: absolute; top: 12.21px; width: 28.89px; height: 28.89px; border-radius: 999px; opacity: .9; }
+  .mc i:first-child { left: .7px;   background: #eb001b; }
+  .mc i:last-child  { left: 22.37px; background: #f7b600; }
+  .mc--sm { width: 32px; height: 32px; }
+  .mc--sm i { top: 7.51px; width: 17.78px; height: 17.78px; }
+  .mc--sm i:first-child { left: .43px; }
+  .mc--sm i:last-child  { left: 13.76px; }
 
-  /* KYC list (E6-A) */
-  .kyc-item { display: flex; align-items: center; gap: 12px; }
-  .kyc-item .ic { width: 32px; height: 32px; border-radius: 999px; background: #e8f4f3; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #0b6d6b; flex-shrink: 0; }
-  .kyc-item span:last-child { font-size: 15px; line-height: 1.4; }
+  /* ── Amount field (Figma "Input" + "Suggestions") ── */
+  .amt-field { position: relative; display: flex; align-items: center; height: 46px; padding: 0 16px; box-sizing: border-box; background: var(--background); border: 1px solid var(--foreground); border-radius: 12px; }
+  .amt-field--error { border-color: var(--destructive); }
+  .amt-field input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 1.2; color: var(--foreground); padding: 0; }
+  .amt-field--error input { color: var(--destructive); }
+  /* The floating label straddles the border, so it blends field fill into screen fill. */
+  .amt-field__label { position: absolute; top: -7px; left: 11px; display: flex; align-items: center; gap: 2px; padding: 0 4px; white-space: nowrap; font-size: 12px; line-height: 1.2; letter-spacing: .25px; color: var(--secondary); background: linear-gradient(to top, var(--background) 49%, var(--screen-decline) 59%); }
+  .amt-field--error .amt-field__label { color: var(--destructive); }
+  .amt-field__label b { font-size: 11px; font-weight: 600; line-height: 1.1; }
+  .sugg { display: flex; gap: 8px; padding-top: 4px; }
+  .sugg button { border: none; cursor: pointer; font-family: var(--font-sans); font-size: 14px; line-height: 1.5; padding: 4px 12px; border-radius: 999px; background: var(--muted); color: var(--foreground); transition: background .15s; }
+  .sugg button:hover { background: var(--neutral-300); }
+  .sugg button[data-active="true"] { background: var(--primary); color: var(--primary-foreground); }
 
-  /* Summary card (E6-C) */
-  .summary { width: 100%; display: flex; flex-direction: column; gap: 10px; background: #efebe7; border-radius: 16px; padding: 16px; text-align: left; margin-top: 4px; box-sizing: border-box; }
-  .summary .row { display: flex; justify-content: space-between; align-items: baseline; }
-  .summary .k { font-size: 14px; color: #877867; }
-  .summary .v { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  /* ── Method picker (Figma "Metod with multiples") ── */
+  .hdr { padding: 24px 16px 0; flex-shrink: 0; }
+  .hdr__top { display: flex; align-items: center; justify-content: space-between; height: 40px; }
+  .hdr__brand { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .hdr__brand .mark { font-family: var(--font-heading); font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+  .hdr__brand .by { font-size: 6px; font-weight: 600; letter-spacing: .02em; padding: 2px 6px; border-radius: 999px; background: var(--turquoise-100); color: var(--turquoise-800); }
+  .hdr__step { font-size: 12px; color: var(--secondary); }
+  .hdr h2 { margin: 24px 0 0; font-family: var(--font-heading); font-size: 28px; font-weight: 800; line-height: 1.1; letter-spacing: -1px; }
+  .hdr__secure { display: flex; gap: 8px; margin-top: 8px; font-size: 12px; line-height: 1.1; color: var(--status-success-text); }
+  .hdr__secure b { display: block; font-weight: 600; }
+  .hdr__secure i { color: var(--status-success); font-size: 18px; }
 
-  .ref-pill { display: flex; align-items: center; gap: 8px; background: #efebe7; border-radius: 999px; padding: 8px 14px; margin-top: 4px; }
-  .ref-pill .k { font-size: 13px; color: #877867; }
-  .ref-pill .v { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .picker { flex: 1; min-height: 0; overflow-y: auto; padding: 24px 16px 8px; display: flex; flex-direction: column; gap: 12px; }
+  .picker__label { font-size: 14px; font-weight: 500; color: var(--mocha); text-align: center; }
+  .applepay { display: flex; align-items: center; justify-content: center; gap: 6px; height: 39px; width: 100%; border: none; border-radius: 999px; background: var(--slate-600); color: var(--linen); font-family: var(--font-sans); font-size: 17px; font-weight: 600; cursor: pointer; }
 
+  .card { display: flex; align-items: center; gap: 8px; width: 100%; box-sizing: border-box; padding: 12px 16px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--background); font-family: var(--font-sans); text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+  .card:hover { border-color: var(--mocha); }
+  .card[data-selected="true"] { border-color: var(--interactive-primary-hover); box-shadow: var(--shadow-selection); }
+  .card[data-disabled="true"] { background: var(--muted); border-color: transparent; opacity: .75; cursor: default; pointer-events: none; }
+  .card__media { width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--foreground); }
+  .card__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .card__title { font-size: 16px; font-weight: 600; line-height: 1.2; color: var(--foreground); }
+  .card__desc { font-size: 12px; line-height: 1.2; letter-spacing: .25px; color: var(--secondary); }
+  .card[data-disabled="true"] .card__title, .card[data-disabled="true"] .card__desc { color: var(--neutral-600); }
+  .card__tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .card__tags span { font-size: 11px; line-height: 1.1; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--secondary); }
+  .card__check { width: 20px; height: 20px; flex-shrink: 0; border-radius: 999px; background: var(--primary); color: var(--primary-foreground); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+  .card__trash { width: 32px; height: 32px; flex-shrink: 0; border: none; background: none; border-radius: 999px; color: var(--destructive); font-size: 15px; cursor: pointer; }
+  .card__trash:hover { background: var(--status-error-bg); }
+  .more { align-self: center; display: inline-flex; align-items: center; gap: 6px; border: none; background: none; font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--foreground); cursor: pointer; padding: 6px 12px; }
+  .visa { height: 12px; }
+
+  /* ── S2 · Sending (dark) ── */
+  .sending { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 0 24px; }
+  .sending__info { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+  .sending .lede { font-size: 14px; line-height: 1.5; color: var(--turquoise-300); }
+  .sending .tail { font-size: 14px; line-height: 1.5; color: var(--turquoise-200); }
+  .sending .amounts { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+  .sending .amounts span { font-family: var(--font-heading); font-size: 24px; font-weight: 800; line-height: 1.3; color: var(--linen); }
+  .sending .amounts i { font-size: 32px; color: var(--turquoise); }
   .spin-logo { display: inline-flex; animation: spin 1s linear infinite; }
 
-  /* Exit interstitial (demo shell — outside the 13 designed states) */
+  /* ── E3-A reassurance strip ── */
+  .reassure { display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; padding: 12px; border-radius: 12px; background: var(--turquoise-100); text-align: left; }
+  .reassure i { width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; background: var(--primary); color: var(--foreground); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .reassure span { font-size: 14px; line-height: 1.4; color: var(--foreground); }
+
+  /* ── E6-A bottom sheet ── */
+  /* Scrim starts below the status bar, as it does on the canvas. */
+  .backdrop { position: absolute; inset: 50px 0 0; background: rgba(8,36,34,.4); display: flex; flex-direction: column; justify-content: flex-end; animation: var(--animate-fade-in); }
+  .sheet { margin: 0 5px; padding: 24px; box-sizing: border-box; background: var(--background); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; gap: 16px; }
+  .sheet__head { display: flex; align-items: flex-start; gap: 8px; }
+  .sheet__head h2 { margin: 0; flex: 1; font-family: var(--font-heading); font-size: 24px; font-weight: 800; line-height: 1.3; letter-spacing: -.5px; }
+  .sheet__close { width: 40px; height: 40px; flex-shrink: 0; border: none; border-radius: 999px; background: var(--muted); color: var(--foreground); font-size: 20px; cursor: pointer; }
+  .sheet__ill { display: flex; justify-content: center; }
+  .sheet p { margin: 0; font-size: 14px; line-height: 1.4; color: var(--foreground); }
+  .need { display: flex; align-items: center; gap: 12px; height: 32px; }
+  .need i { width: 32px; height: 32px; flex-shrink: 0; border-radius: 999px; background: var(--turquoise-50); color: var(--turquoise-800); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .need span { font-size: 14px; line-height: 1.2; }
+
+  /* ── E4 reference pill ── */
+  .ref-pill { display: flex; align-items: center; gap: 8px; background: var(--muted); border-radius: 999px; padding: 8px 14px; }
+  .ref-pill .k { font-size: 12px; color: var(--mocha); }
+  .ref-pill .v { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+
+  /* ── Handoff placeholder (KYC Flow / step-up provider — owned by other teams) ── */
+  .tbd-frame { flex: 1; border: 1.5px dashed var(--border); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 0 32px; background: repeating-linear-gradient(135deg, var(--linen), var(--linen) 10px, #f6f2ed 10px, #f6f2ed 20px); }
+  .tbd-pill { display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 999px; background: var(--status-warning-bg); color: var(--status-warning-text); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+  .tbd-frame .t-title { font-size: 17px; font-weight: 600; line-height: 1.35; }
+  .tbd-frame .t-desc { font-size: 14px; line-height: 1.5; color: var(--mocha); }
+  .sim-row { display: flex; gap: 8px; }
+  .sim-btn { height: 32px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--linen); font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--foreground); cursor: pointer; }
+  .sim-btn:hover { border-color: var(--mocha); }
+
+  .summary { width: 100%; display: flex; flex-direction: column; gap: 10px; background: var(--muted); border-radius: 16px; padding: 16px; text-align: left; box-sizing: border-box; }
+  .summary .row { display: flex; justify-content: space-between; align-items: baseline; }
+  .summary .k { font-size: 14px; color: var(--mocha); }
+  .summary .v { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* Exit interstitial (demo shell — outside the designed states) */
   .exit-screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 0 36px; text-align: center; background: #f6f2ed; }
-  .exit-screen .ic { width: 56px; height: 56px; border-radius: 999px; background: #d4fffe; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #065958; }
+  .exit-screen .ic { width: 56px; height: 56px; border-radius: 999px; background: var(--turquoise-100); display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--turquoise-800); }
   .exit-screen .t { font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
-  .exit-screen .d { font-size: 14px; line-height: 1.5; color: #877867; }
-  .exit-screen .tag { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; border: 1px dashed #adaa9e; color: #877867; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .exit-screen .d { font-size: 14px; line-height: 1.5; color: var(--mocha); }
+  .exit-screen .tag { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; border: 1px dashed var(--neutral-500); color: var(--mocha); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -123,7 +196,7 @@
 
   <aside class="rail">
     <h1>Payment declines</h1>
-    <p class="lede">Implementation of the 13 decline states. Pick a decline scenario — every attempt enters through S2 (classifying), then routes to its experience. Copy never names the payment's purpose and never leaks the decline reason.</p>
+    <p class="lede">Implementation of the decline states on the Figma canvas “🟦 Error handling”. Pick a scenario — every attempt enters through S2 (sending), then routes to its experience. Copy never names the payment’s purpose and never leaks the decline reason.</p>
     <div>
       <div class="group-label" style="margin-bottom:8px">Decline scenarios</div>
       <div class="scenarios" id="scenarios"></div>
@@ -144,13 +217,16 @@
 <script>
 (() => {
   const ILL = "_ds/f-lix-design-system-f7e7a69b-3215-41c2-a457-b1dfa4aa56e1/assets/illustrations/";
-  const RETRY_CAP = 3;           // attempts with the same method before E1-B
-  const CLASSIFY_MIN_MS = 400;   // S2 minimum hold — decline never flashes in
+  const RETRY_CAP = 3;              // attempts with the same method before E1-B
+  const CLASSIFY_MIN_MS = 400;      // S2 minimum hold — a decline never flashes in
   const CLASSIFY_TIMEOUT_MS = 8000; // capability timeout → E4 (proposed degraded behaviour)
+  const MXN_RATE = 20.04;           // canvas shows USD 100.00 → $2,004 MXN
 
-  const fmt = n => "$" + n.toFixed(2);
+  const fmt  = n => "$" + n.toFixed(2);
+  const mxn  = n => "$" + Math.round(n * MXN_RATE).toLocaleString("en-US");
 
   // ── Flow context ────────────────────────────────────────────────
+  // Instruments mirror the picker on the canvas (node 4901:36942).
   const ctx = {
     scenario: null,
     amount: 600,
@@ -158,9 +234,14 @@
     attempts: 0,        // attempts with the current method (resets on method change — TBD assumption)
     kycStep: 1,
     methods: [
-      { id: "visa",  icon: "credit-card", title: "Visa ···· 4242",         sub: "Debit",              failed: true },
-      { id: "mc",    icon: "credit-card", title: "Mastercard ···· 8890",   sub: "Debit" },
-      { id: "bank",  icon: "bank",        title: "Bank account ···· 1120", sub: "1–2 business days" },
+      { id: "mc",   brand: "mc",   title: "**** 6789",     desc: "Tarjeta de crédito Mastercard", alert: "Tarjeta Débito ···· 6789", failed: true },
+      { id: "visa", brand: "visa", title: "**** 5164",     desc: "Tarjeta de débito Visa",        alert: "Tarjeta Débito ···· 5164" },
+      { id: "bank", brand: "bank", title: "*** *** 6789",  desc: "Institución Bancaria de Prueba", alert: "Institución Bancaria ···· 6789" },
+    ],
+    // Not-yet-added instruments — no balance, no delete affordance.
+    newMethods: [
+      { id: "new-card", brand: "card", title: "Tarjeta de crédito/débito", tags: ["Instantáneo", "Sin comisiones con tarjeta débito"] },
+      { id: "new-bank", brand: "bank", title: "Cuenta bancaria",           tags: ["1-3 días hábiles", "Sin comisiones"] },
     ],
     method: null,       // current instrument
     selected: null,     // picker selection
@@ -168,14 +249,14 @@
   ctx.method = ctx.methods[0];
 
   const SCENARIOS = [
-    { id: "transient", code: "E1", label: "Transient decline (retry)" },
-    { id: "hard",      code: "E2", label: "Instrument unavailable" },
-    { id: "stepup",    code: "E3", label: "Security step-up" },
-    { id: "terminal",  code: "E4", label: "Terminal decision" },
+    { id: "transient", code: "E1",   label: "Transient decline (retry)" },
+    { id: "hard",      code: "E2",   label: "Instrument unavailable" },
+    { id: "stepup",    code: "E3",   label: "Security step-up" },
+    { id: "terminal",  code: "E4",   label: "Terminal decision" },
     { id: "amount",    code: "E5-A", label: "Amount declined" },
     { id: "limit",     code: "E5-B", label: "Amount above limit" },
-    { id: "kyc",       code: "E6", label: "Verification required" },
-    { id: "timeout",   code: "S2", label: "Capability down (8 s → E4)" },
+    { id: "kyc",       code: "E6",   label: "Verification required" },
+    { id: "timeout",   code: "S2",   label: "Capability down (8 s → E4)" },
   ];
 
   // ── Demo shell plumbing ─────────────────────────────────────────
@@ -197,15 +278,16 @@
     document.getElementById("state-name").textContent = name;
   }
 
-  function render(code, name, html) {
+  // bg: "decline" (#fff5ef), "dark" (#082422) or omitted for --background.
+  function render(code, name, html, bg) {
     clearTimers();
     setState(code, name);
     log('<span class="st">' + code + "</span> · " + name);
-    phone.innerHTML = '<div class="screen">' + html + "</div>";
+    phone.innerHTML = '<div class="screen"' + (bg ? ' data-bg="' + bg + '"' : "") + ">" + html + "</div>";
   }
 
   // Exits leave this surface (review, home, WhatsApp, Identity deep link).
-  // They are outside the 13 designed states, so the demo shows a neutral interstitial.
+  // They sit outside the designed states, so the demo shows a neutral interstitial.
   function exit(title, desc) {
     clearTimers();
     setState("—", "Outside this surface");
@@ -221,41 +303,67 @@
   }
 
   // ── Shared fragments ────────────────────────────────────────────
+  const ios = () =>
+    '<div class="ios"><span>9:41</span>' +
+      '<span class="sig"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-full"></i></span>' +
+    "</div>";
+
   const closeBar = () =>
-    '<div class="topbar topbar--end"><button class="chip-btn" aria-label="Close" onclick="APP.close()"><i class="ph ph-x"></i></button></div>';
+    '<div class="topbar topbar--end"><button class="x-btn" aria-label="Close" onclick="APP.close()"><i class="ph ph-x"></i></button></div>';
 
   const ill = (name, w) => '<img src="' + ILL + name + '.svg" width="' + w + '" alt="" style="display:block">';
 
   const btn = (label, variant, onclick, disabled) =>
-    '<button class="fx-btn fx-btn--' + variant + ' fx-btn--lg fx-btn--full" onclick="' + onclick + '"' + (disabled ? " disabled" : "") + ">" + label + "</button>";
+    '<button class="fx-btn fx-btn--' + variant + ' fx-btn--figma fx-btn--full" onclick="' + onclick + '"' + (disabled ? " disabled" : "") + ">" + label + "</button>";
 
-  const methodCard = (icon, title, sub, error) =>
-    '<div class="method-card' + (error ? " method-card--error" : "") + '">' +
-      '<span class="badge-ic"><i class="ph-duotone ph-' + icon + '"></i></span>' +
-      '<div class="col"><span class="m-title">' + title + '</span><span class="m-sub">' + sub + "</span></div>" +
+  // Brand marks: Mastercard is two overlapping circles in the canvas (not an asset);
+  // Visa is the exported wordmark; bank/card fall back to the Phosphor glyphs the canvas uses.
+  const mark = (brand, sm) => {
+    if (brand === "mc")   return '<span class="mc' + (sm ? " mc--sm" : "") + '"><i></i><i></i></span>';
+    if (brand === "visa") return '<img class="visa" src="' + ILL + 'visa.svg" alt="Visa">';
+    if (brand === "bank") return '<i class="ph ph-bank"></i>';
+    return '<i class="ph ph-credit-card"></i>';
+  };
+
+  // Figma "Alert" — the instrument this attempt used, plus one line of context.
+  const instrument = (m, meta, icon, error) =>
+    '<div class="inst' + (error ? " inst--error" : "") + '">' +
+      '<span class="inst__logo">' + mark(m.brand) + "</span>" +
+      '<span class="inst__body">' +
+        '<span class="inst__title">' + m.alert + "</span>" +
+        '<span class="inst__meta">' + (icon ? '<i class="ph ph-' + icon + '"></i>' : "") + "<span>" + meta + "</span></span>" +
+      "</span>" +
     "</div>";
 
   const spinner = size =>
-    '<span class="spin-logo" role="status" aria-label="Loading">' +
-      '<svg viewBox="0 0 78 78" height="' + size + '" width="' + size + '" fill="var(--turquoise-600)">' +
+    '<span class="spin-logo" role="status" aria-label="Sending">' +
+      '<svg viewBox="0 0 78 78" height="' + size + '" width="' + size + '" fill="var(--lime)">' +
         '<path d="M33.5925 33.7539L34.0941 33.7718L35.2255 19.3908H67.8167L70 0L12.159 0.00891428C12.159 0.00891428 10.9833 5.28171 10.6916 8.85188C9.4784 23.7432 18.9455 33.3194 33.5925 33.7539Z"></path>' +
         '<path d="M8.54363 66.3758L8 78H31.0644L32.9229 54.7137L50.9023 54.8006L53.205 34.5339H44.16C25.427 34.5339 9.20659 46.3587 8.54142 66.378L8.54363 66.3758Z"></path>' +
       "</svg></span>";
 
-  // ── S2 · Classifying ────────────────────────────────────────────
-  // Full screen, neutral copy: at this point we don't know which experience is coming.
+  // ── S2 · Sending ────────────────────────────────────────────────
+  // Dark full-bleed screen. Neutral by design: at this point we don't know
+  // which experience is coming, so it reads as progress, not as a warning.
   function classify(route, latency) {
-    render("S2", "Classifying",
-      '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:0 40px;text-align:center">' +
-        spinner(56) +
-        '<div style="display:flex;flex-direction:column;gap:8px">' +
-          '<span style="font-size:20px;font-weight:600;letter-spacing:-.01em">Checking your payment</span>' +
-          '<span style="font-size:15px;line-height:1.5;color:#877867">This takes a few seconds.</span>' +
+    render("S2", "Sending",
+      ios() +
+      '<div class="sending">' +
+        spinner(152) +
+        '<div class="sending__info">' +
+          '<span class="lede">Enviando…</span>' +
+          '<div class="amounts">' +
+            "<span>USD " + ctx.amount.toFixed(2) + "</span>" +
+            '<i class="ph-duotone ph-arrow-right"></i>' +
+            "<span>" + mxn(ctx.amount) + " MXN</span>" +
+          "</div>" +
+          '<span class="tail">Ya casi llega.</span>' +
         "</div>" +
-      "</div>");
+      "</div>", "dark");
+
     const started = Date.now();
     if (latency >= CLASSIFY_TIMEOUT_MS) {
-      // Degraded behaviour: capability never answered → E4 with the support CTA.
+      // Degraded behaviour: the capability never answered → E4 with the support CTA.
       later(() => { log("S2 timed out after 8 s — falling back to E4"); e4(); }, CLASSIFY_TIMEOUT_MS);
       return;
     }
@@ -266,238 +374,236 @@
   }
 
   // ── E1 · Retry ──────────────────────────────────────────────────
-  function e1() {
-    ctx.attempts >= RETRY_CAP ? e1b() : e1a();
-  }
+  function e1() { ctx.attempts >= RETRY_CAP ? e1b() : e1a(); }
 
   function e1a() {
     render("E1-A", "Retry, initial",
-      closeBar() +
+      ios() +
       '<div class="hero">' +
-        ill("sand-clock", 132) +
-        "<h2>That didn’t go through</h2>" +
-        "<p>Something went wrong on the way. No money moved and you weren’t charged. Try again in a moment.</p>" +
-        methodCard("credit-card", ctx.method.title, fmt(ctx.amount) + " USD") +
+        ill("attention", 121) +
+        '<h2 class="t-display">That didn’t go through</h2>' +
+        '<p class="t-body">Something went wrong on the way. No money moved and you weren’t charged. Try again in a moment.</p>' +
+        instrument(ctx.method, fmt(ctx.amount) + " USD", "money") +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Try again", "primary", "APP.retry()") +
         btn("Use another method", "ghost", "APP.picker('E1')") +
-      "</div>");
+      "</div>", "decline");
   }
 
   function e1b() {
     render("E1-B", "Escalated — cap reached",
-      closeBar() +
+      ios() +
       '<div class="hero">' +
-        ill("cards", 132) +
-        "<h2>Still not going through</h2>" +
-        "<p>We tried this card three times without luck. Another payment method usually fixes it.</p>" +
-        methodCard("credit-card", ctx.method.title, ctx.attempts + " attempts") +
+        ill("attention", 121) +
+        '<h2 class="t-display">Still not going through</h2>' +
+        '<p class="t-body">We tried this card three times without luck. Another payment method usually fixes it.</p>' +
+        instrument(ctx.method, ctx.attempts + " attempts") +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Use another method", "primary", "APP.picker('E1')") +
         btn("Try again", "ghost", "APP.retry()") +   // the cap is a nudge, not a lock
-      "</div>");
+      "</div>", "decline");
   }
 
   // ── E2 · Another method only ────────────────────────────────────
   function e2() {
     render("E2", "Another method only",
-      closeBar() +
+      ios() +
       '<div class="hero">' +
-        ill("hand-card-1", 132) +
-        "<h2>This card can’t be used</h2>" +
-        "<p>Your bank won’t accept it right now. Pick another payment method and we’ll continue from here — nothing else changes.</p>" +
-        methodCard("credit-card", ctx.method.title, "Unavailable", true) +
+        ill("error", 121) +
+        '<h2 class="t-display">This card can’t be used</h2>' +
+        '<p class="t-body">Your bank won’t accept it right now. Pick another payment method and we’ll continue from here — nothing else changes.</p>' +
+        instrument(ctx.method, "Unavailable", null, true) +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Choose another method", "primary", "APP.picker('E2')") +
         btn("Cancel", "ghost", "APP.close()") +
-      "</div>");
+      "</div>", "decline");
   }
 
-  // ── S1 · Method picker (shared, E1 + E2) ────────────────────────
+  // ── S1 · Method picker (shared, E1 + E2 + E5) ───────────────────
+  // The production picker, reached mid-decline: same screen the user knows,
+  // with the failed instrument greyed out rather than hidden.
   function s1(from) {
-    // Failed method stays visible but disabled; next available method pre-selected.
-    const failedSub = from === "E2" ? "Unavailable right now" : "Didn’t go through";
     if (!ctx.selected) ctx.selected = ctx.methods.find(m => !m.failed).id;
-    const rows = ctx.methods.map(m => {
+
+    const saved = ctx.methods.map(m => {
       if (m.failed) {
-        return '<div class="pick-row" data-disabled="true">' +
-          '<span class="badge-ic"><i class="ph-duotone ph-' + m.icon + '"></i></span>' +
-          '<div class="col" style="display:flex;flex-direction:column;gap:2px">' +
-            '<span class="m-title" style="font-size:15px;font-weight:600">' + m.title + "</span>" +
-            '<span class="m-sub" style="font-size:13px;color:#877867">' + failedSub + "</span>" +
-          "</div></div>";
+        return '<div class="card" data-disabled="true">' +
+          '<span class="card__media">' + mark(m.brand, true) + "</span>" +
+          '<span class="card__body"><span class="card__title">' + m.title + "</span>" +
+          '<span class="card__desc">' + (from === "E2" ? "No disponible ahora" : m.desc) + "</span></span>" +
+          '<span class="card__trash"><i class="ph ph-trash"></i></span>' +
+        "</div>";
       }
       const sel = ctx.selected === m.id;
-      return '<button class="pick-row" data-selected="' + sel + '" onclick="APP.select(\'' + m.id + "','" + from + "')\">" +
-        '<span class="badge-ic"><i class="ph-duotone ph-' + m.icon + '"></i></span>' +
-        '<div class="col" style="display:flex;flex-direction:column;gap:2px">' +
-          '<span class="m-title" style="font-size:15px;font-weight:600">' + m.title + "</span>" +
-          '<span class="m-sub" style="font-size:13px;color:#877867">' + m.sub + "</span>" +
-        "</div>" +
-        (sel ? '<span class="check"><i class="ph-bold ph-check"></i></span>' : "") +
+      return '<button class="card" data-selected="' + sel + '" onclick="APP.select(\'' + m.id + "','" + from + "')\">" +
+        '<span class="card__media">' + mark(m.brand, true) + "</span>" +
+        '<span class="card__body"><span class="card__title">' + m.title + "</span>" +
+        '<span class="card__desc">' + m.desc + "</span></span>" +
+        (sel ? '<span class="card__check"><i class="ph-bold ph-check"></i></span>' : "") +
+        '<span class="card__trash"><i class="ph ph-trash"></i></span>' +
       "</button>";
     }).join("");
 
+    const fresh = ctx.newMethods.map(m =>
+      '<button class="card" onclick="APP.exitTo(\'Add a new method\', \'Opens the add-method flow, then returns here with the new instrument selected.\')">' +
+        '<span class="card__media">' + mark(m.brand, true) + "</span>" +
+        '<span class="card__body"><span class="card__title">' + m.title + "</span>" +
+        '<span class="card__tags">' + m.tags.map(t => "<span>" + t + "</span>").join("") + "</span></span>" +
+      "</button>").join("");
+
     render("S1", "Method picker",
-      '<div class="topbar"><button class="chip-btn" aria-label="Back" onclick="APP.back(\'' + from + '\')"><i class="ph ph-arrow-left"></i></button></div>' +
-      '<div style="flex:1;display:flex;flex-direction:column;gap:16px;padding:8px 16px 0;overflow:hidden">' +
-        '<div style="display:flex;flex-direction:column;gap:6px;padding:0 8px">' +
-          '<h2 style="margin:0;font-size:28px;font-weight:700;line-height:1.2;letter-spacing:-.01em">Choose another method</h2>' +
-          '<p style="margin:0;font-size:15px;line-height:1.5;color:#3f5a58">Your amount and recipient stay as they are.</p>' +
+      ios() +
+      '<div class="fx-progress fx-progress--sm"><div class="fx-progress__bar" style="width:33%"></div></div>' +
+      '<div class="hdr">' +
+        '<div class="hdr__top">' +
+          '<button class="fx-iconbtn fx-iconbtn--line fx-iconbtn--sm" style="width:32px;height:32px;font-size:14px" aria-label="Back" onclick="APP.back(\'' + from + '\')"><i class="ph ph-caret-left"></i></button>' +
+          '<span class="hdr__brand"><span class="mark">Félix</span><span class="by">An authorized agent of UniTeller</span></span>' +
+          '<span class="hdr__step">1 de 3</span>' +
         "</div>" +
-        '<div style="display:flex;flex-direction:column;gap:10px">' + rows +
-          '<button class="pick-row" data-add="true" onclick="APP.exitTo(\'Add a new method\', \'Opens the add-method flow, then returns here with the new instrument selected.\')">' +
-            '<span class="badge-ic"><i class="ph ph-plus"></i></span>' +
-            '<span style="font-size:15px;font-weight:600">Add a new method</span>' +
-          "</button>" +
-        "</div>" +
+        "<h2>Elige tu forma de pago</h2>" +
+        '<div class="hdr__secure"><i class="ph-fill ph-shield-check"></i>' +
+          "<span><b>Tu información está segura con nosotros</b>Pago encriptado con SSL de 256 bits.</span></div>" +
       "</div>" +
-      '<div style="padding:16px 16px 24px;flex-shrink:0">' + btn("Continue", "primary", "APP.confirmMethod()") + "</div>");
+      '<div class="picker">' +
+        '<span class="picker__label">Pago rápido con</span>' +
+        '<button class="applepay" onclick="APP.exitTo(\'Apple Pay sheet\', \'Hands off to the Apple Pay sheet, then returns to review.\')">' +
+          '<i class="ph-fill ph-apple-logo"></i>Pay</button>' +
+        '<span class="picker__label">O elige otro método</span>' +
+        saved + fresh +
+        '<button class="more" onclick="APP.exitTo(\'More methods\', \'Expands the remaining instruments — out of scope for this canvas.\')">' +
+          '<i class="ph ph-caret-down"></i>Ver más</button>' +
+      "</div>" +
+      '<div class="actions">' + btn("Continuar", "primary", "APP.confirmMethod()") + "</div>");
   }
 
   // ── E5 · Another amount ─────────────────────────────────────────
   function e5(limitShown) {
-    const over = ctx.amount - ctx.available;
-    const isOver = limitShown && over > 0;
-    const chips = limitShown
-      ? '<button class="amt-chip amt-chip--rec" onclick="APP.setAmount(' + ctx.available + ')">Send ' + fmt(ctx.available) + "</button>" +
-        '<button class="amt-chip" onclick="APP.setAmount(300)">' + fmt(300) + "</button>"
-      : '<button class="amt-chip amt-chip--rec" onclick="APP.setAmount(450)">Try ' + fmt(450) + "</button>" +
-        '<button class="amt-chip" onclick="APP.setAmount(300)">' + fmt(300) + "</button>" +
-        '<button class="amt-chip" onclick="APP.setAmount(150)">' + fmt(150) + "</button>";
+    const over   = ctx.amount - ctx.available;
+    const isOver = over > 0;
+    const chip = v =>
+      '<button data-active="' + (!isOver && v === ctx.amount) + '" onclick="APP.setAmount(' + v + ')">' + fmt(v) + "</button>";
 
     render(limitShown ? "E5-B" : "E5-A", limitShown ? "Another amount, limit shown" : "Another amount, default",
-      closeBar() +
-      '<div style="flex:1;display:flex;flex-direction:column;gap:20px;padding:24px 24px 0;min-height:0">' +
-        '<div style="display:flex;justify-content:center">' + ill("calculator-coins", 112) + "</div>" +
-        '<h2 style="margin:0;font-size:28px;font-weight:700;line-height:1.2;letter-spacing:-.01em;text-align:center">Try a different amount</h2>' +
-        '<p style="margin:0;font-size:16px;line-height:1.5;color:#3f5a58;text-align:center;text-wrap:pretty">' +
+      ios() +
+      '<div class="hero" style="padding-top:24px">' +
+        ill("calculator-coins", 167) +
+        '<h2 class="t-display">Try a different amount</h2>' +
+        '<p class="t-body">' +
           (limitShown
             ? "This amount is above what you can send right now. Adjust it and we’ll pick up right where you left off."
             : "This amount didn’t go through. Adjust it and we’ll pick up right where you left off.") +
         "</p>" +
-        '<div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">' +
-          '<div style="display:flex;align-items:baseline;justify-content:space-between">' +
-            '<span style="font-size:14px;font-weight:500;color:#082422">Amount</span>' +
-            (limitShown ? '<span style="font-size:13px;font-weight:500;color:#877867;font-variant-numeric:tabular-nums">Available now ' + fmt(ctx.available) + " USD</span>" : "") +
+        '<div style="display:flex;flex-direction:column;gap:8px;width:100%">' +
+          '<div class="amt-field' + (isOver ? " amt-field--error" : "") + '">' +
+            '<span class="amt-field__label">Amount<b>*</b></span>' +
+            '<input id="amt" type="text" inputmode="decimal" value="$' + ctx.amount + '" oninput="APP.amountInput(this.value)">' +
           "</div>" +
-          '<div class="amount-box' + (isOver ? " amount-box--error" : "") + '">' +
-            '<span style="font-size:30px;font-weight:700;color:' + (isOver ? "#a03808" : "#082422") + '">$</span>' +
-            '<input id="amt" type="text" inputmode="decimal" value="' + ctx.amount.toFixed(2) + '" oninput="APP.amountInput(this.value)">' +
-            '<span class="cur">USD</span>' +
-          "</div>" +
-          (isOver ? '<span style="font-size:13px;color:#a03808">' + fmt(over) + " USD over your available amount</span>" : "") +
-          '<div style="display:flex;gap:8px;margin-top:4px">' + chips + "</div>" +
+          (isOver ? '<span class="fx-help fx-help--error" style="text-align:left">' + fmt(over) + " USD over your available amount</span>" : "") +
+          '<div class="sugg">' + [450, 300, 150].map(chip).join("") + "</div>" +
         "</div>" +
-        (limitShown
-          ? '<div style="margin-top:auto;margin-bottom:8px">' +
-              '<div class="fx-alert fx-alert--info"><span class="fx-alert__icon"><i class="ph-duotone ph-info"></i></span>' +
-              '<div class="fx-alert__body"><span class="fx-alert__title">More becomes available on Sep 1</span>' +
-              '<span class="fx-alert__desc">Your limit resets at the start of each month.</span></div></div>' +
-            "</div>"
-          : "") +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Continue", "primary", "APP.confirmAmount()", isOver) +
         btn("Use another method", "ghost", "APP.picker('E5')") +
-      "</div>");
+      "</div>", "decline");
 
     const input = document.getElementById("amt");
-    if (input) { input.focus(); input.select(); }  // pre-filled, focused, selectable — never blank
+    if (input) { input.focus(); input.setSelectionRange(1, input.value.length); }  // pre-filled, never blank
   }
 
   // ── E3 · Step-up ────────────────────────────────────────────────
   function e3a() {
     render("E3-A", "Step-up offer",
-      closeBar() +
+      ios() +
       '<div class="hero">' +
-        ill("lock", 132) +
-        "<h2>Let’s confirm it’s you</h2>" +
-        "<p>One quick security check and we’ll finish the payment. It takes less than a minute.</p>" +
-        '<div class="method-card"><span class="badge-ic"><i class="ph-duotone ph-shield-check"></i></span>' +
-          '<span style="font-size:14px;line-height:1.45;color:#3f5a58;text-align:left">Your money stays where it is until the check is done.</span></div>' +
+        ill("lock", 108) +
+        '<h2 class="t-display">Let’s confirm it’s you</h2>' +
+        '<p class="t-body">One quick security check and we’ll finish the payment. It takes less than a minute.</p>' +
+        '<div class="reassure"><i class="ph-fill ph-shield-check"></i>' +
+          "<span>Your money stays where it is until the check is done.</span></div>" +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Verify now", "primary", "APP.stepUpHost()") +
         btn("Cancel", "ghost", "APP.stepUpCancel()") +   // explicit exit → E4
       "</div>");
   }
 
+  // Provider surface. The canvas stops at the offer; the challenge itself is Fraud's.
   function e3b() {
-    render("E3-B", "Step-up host — placeholder",
-      '<div class="topbar topbar--split">' +
-        '<button class="chip-btn" aria-label="Back" onclick="APP.stepUpCancel()"><i class="ph ph-arrow-left"></i></button>' +
-        '<span class="title">Security check</span><span class="spacer"></span>' +
-      "</div>" +
+    render("E3-B", "Step-up host — handoff",
+      ios() +
+      '<div class="topbar"><button class="x-btn" aria-label="Back" onclick="APP.stepUpCancel()"><i class="ph ph-arrow-left"></i></button></div>' +
       '<div style="flex:1;display:flex;flex-direction:column;gap:16px;padding:16px;min-height:0">' +
         '<div class="tbd-frame">' +
-          '<span class="tbd-pill">TBD</span>' +
+          '<span class="tbd-pill">HANDOFF</span>' +
           '<span class="t-title">Provider surface goes here</span>' +
           '<span class="t-desc">3DS challenge, re-authentication or one-time code — whichever Fraud picks. Félix chrome stays; the inner frame is theirs.</span>' +
           '<div class="sim-row"><button class="sim-btn" onclick="APP.stepUpPass()">Simulate pass</button>' +
           '<button class="sim-btn" onclick="APP.stepUpFail()">Simulate fail</button></div>' +
         "</div>" +
-        '<span style="font-size:13px;line-height:1.5;color:#877867;text-align:center">Don’t close this screen while the check is running.</span>' +
+        '<span style="font-size:13px;line-height:1.5;color:var(--mocha);text-align:center">Don’t close this screen while the check is running.</span>' +
       "</div>" +
-      '<div style="padding:16px 16px 24px;flex-shrink:0">' + btn("Cancel verification", "ghost", "APP.stepUpCancel()") + "</div>");
+      '<div class="actions">' + btn("Cancel verification", "ghost", "APP.stepUpCancel()") + "</div>");
   }
 
-  // ── E6 · KYC L2 ─────────────────────────────────────────────────
+  // ── E6 · Verification required ──────────────────────────────────
+  // On the canvas this is a bottom sheet over the review screen, not a full page.
   function e6a() {
-    const item = (icon, label) =>
-      '<div class="kyc-item"><span class="ic"><i class="ph-duotone ph-' + icon + '"></i></span><span>' + label + "</span></div>";
-    render("E6-A", "KYC L2 offer",
-      closeBar() +
-      '<div style="flex:1;display:flex;flex-direction:column;gap:20px;padding:24px 24px 0;min-height:0">' +
-        '<div style="display:flex;justify-content:center">' + ill("passport", 120) + "</div>" +
-        '<h2 style="margin:0;font-size:28px;font-weight:700;line-height:1.2;letter-spacing:-.01em;text-align:center">Verify your identity to continue</h2>' +
-        '<p style="margin:0;font-size:16px;line-height:1.5;color:#3f5a58;text-align:center;text-wrap:pretty">We need a little more information before this payment can go through. You’ll only do this once.</p>' +
-        '<div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">' +
-          item("identification-card", "A photo of your ID") +
-          item("user-focus", "A quick selfie") +
-          item("timer", "About 3 minutes") +
+    const need = (icon, label) =>
+      '<div class="need"><i class="ph-duotone ph-' + icon + '"></i><span>' + label + "</span></div>";
+    render("E6-A", "Verify identity — sheet",
+      ios() +
+      '<div style="flex:1"></div>' +
+      '<div class="backdrop">' +
+        '<div class="sheet">' +
+          '<div class="sheet__head">' +
+            "<h2>Verify your identity to continue</h2>" +
+            '<button class="sheet__close" aria-label="Close" onclick="APP.kycDefer()"><i class="ph ph-x"></i></button>' +
+          "</div>" +
+          '<div class="sheet__ill">' + ill("verify-selfie", 184) + "</div>" +
+          "<p>We need a little more information before this payment can go through. You’ll only do this once.</p>" +
+          "<div>" +
+            need("identification-card", "A photo of your ID") +
+            need("scan-smiley", "A quick selfie") +
+            need("timer", "About 3 minutes") +
+          "</div>" +
+          btn("Verificar Identidad", "primary", "APP.kycStart()") +
         "</div>" +
-      "</div>" +
-      '<div class="footer">' +
-        btn("Verify my identity", "primary", "APP.kycStart()") +
-        btn("Not now", "ghost", "APP.kycDefer()") +   // saves the payment as a draft
       "</div>");
   }
 
+  // The capture flow itself is the "KYC Flow" box on the canvas — owned by Identity.
   function e6b() {
-    render("E6-B", "L2 capture — placeholder",
-      '<div class="topbar topbar--split">' +
-        '<button class="chip-btn" aria-label="Back" onclick="APP.kycLeave()"><i class="ph ph-arrow-left"></i></button>' +
-        '<span class="title">Step ' + ctx.kycStep + ' of 3</span><span class="spacer"></span>' +
-      "</div>" +
-      '<div style="padding:0 16px 8px"><div class="fx-progress fx-progress--md"><div class="fx-progress__bar" style="width:' + Math.round(ctx.kycStep / 3 * 100) + '%"></div></div></div>' +
+    render("E6-B", "KYC Flow — handoff",
+      ios() +
+      '<div class="topbar"><button class="x-btn" aria-label="Back" onclick="APP.kycLeave()"><i class="ph ph-arrow-left"></i></button></div>' +
       '<div style="flex:1;display:flex;flex-direction:column;gap:16px;padding:16px;min-height:0">' +
         '<div class="tbd-frame">' +
-          '<span class="tbd-pill">TBD</span>' +
+          '<span class="tbd-pill">HANDOFF</span>' +
           '<span class="t-title">Identity’s capture flow</span>' +
-          '<span class="t-desc">ID front and back, then selfie. Owned by Identity — this surface only fixes the entry, the progress chrome and the two exits.</span>' +
-          '<div class="sim-row"><button class="sim-btn" onclick="APP.kycFail()">Simulate failure</button></div>' +
+          '<span class="t-desc">ID front and back, then selfie. Owned by Identity — this surface only fixes the entry point and the two ways back.</span>' +
+          '<div class="sim-row"><button class="sim-btn" onclick="APP.kycPass()">Simulate pass</button>' +
+          '<button class="sim-btn" onclick="APP.kycFail()">Simulate failure</button></div>' +
         "</div>" +
-      "</div>" +
-      '<div style="padding:16px 16px 24px;flex-shrink:0">' + btn("Continue", "primary", "APP.kycNext()") + "</div>");
+      "</div>");
   }
 
   function e6c() {
     render("E6-C", "Verified — retry unlocked",
-      '<div style="height:48px;flex-shrink:0"></div>' +
-      '<div class="hero" style="padding-top:40px">' +
-        ill("party-popper", 132) +
-        "<h2>You’re all set</h2>" +
-        "<p>Your identity is confirmed. Your payment is ready to go, exactly as you left it.</p>" +
+      ios() +
+      '<div class="hero">' +
+        ill("party-popper", 121) +
+        '<h2 class="t-display">You’re all set</h2>' +
+        '<p class="t-body">Your identity is confirmed. Your payment is ready to go, exactly as you left it.</p>' +
         '<div class="summary">' +
           '<div class="row"><span class="k">Amount</span><span class="v">' + fmt(ctx.amount) + " USD</span></div>" +
-          '<div class="row"><span class="k">Method</span><span class="v">' + ctx.method.title + "</span></div>" +
+          '<div class="row"><span class="k">Method</span><span class="v">' + ctx.method.alert + "</span></div>" +
         "</div>" +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Try again", "primary", "APP.kycRetry()") +
         btn("Not now", "ghost", "APP.kycDefer()") +
       "</div>");
@@ -505,29 +611,30 @@
 
   function e6d() {
     render("E6-D", "Verification failed or left",
-      closeBar() +
+      ios() +
       '<div class="hero">' +
-        ill("attention", 126) +
-        "<h2>We couldn’t verify you yet</h2>" +
-        "<p>Your payment is saved. You can pick the verification back up whenever you’re ready, or write to us on WhatsApp.</p>" +
+        ill("attention", 121) +
+        '<h2 class="t-display">We couldn’t verify you yet</h2>' +
+        '<p class="t-body">Your payment is saved. You can pick the verification back up whenever you’re ready, or write to us on WhatsApp.</p>' +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Try verifying again", "primary", "APP.kycStart()") +
         btn("Message us on WhatsApp", "ghost", "APP.whatsapp()") +
-      "</div>");
+      "</div>", "decline");
   }
 
   // ── E4 · Final decision (and the catch-all) ─────────────────────
   function e4() {
     render("E4", "Final decision",
+      ios() +
       closeBar() +
-      '<div class="hero">' +
-        ill("headphones", 126) +
-        "<h2>We couldn’t complete this payment</h2>" +
-        "<p>Nothing was charged. Our team on WhatsApp can look into it with you.</p>" +
+      '<div class="hero" style="padding-top:0">' +
+        ill("headphones", 178) +
+        '<h2 class="t-display">We couldn’t complete this payment</h2>' +
+        '<p class="t-body">Nothing was charged. Our team on WhatsApp can look into it with you.</p>' +
         '<div class="ref-pill"><span class="k">Reference</span><span class="v">8F3K-2201</span></div>' +
       "</div>" +
-      '<div class="footer">' +
+      '<div class="actions">' +
         btn("Message us on WhatsApp", "primary", "APP.whatsapp()") +
         btn("Done", "ghost", "APP.close()") +
       "</div>");
@@ -550,8 +657,10 @@
   window.APP = {
     start(id) {
       ctx.scenario = id;
-      ctx.amount = 600; ctx.available = 450; ctx.attempts = 0; ctx.kycStep = 1;
-      ctx.methods.forEach(m => m.failed = m.id === "visa");
+      // E5-A opens on the suggested amount; E5-B opens over the limit, as drawn.
+      ctx.amount = id === "amount" ? 450 : 600;
+      ctx.available = 450; ctx.attempts = 0; ctx.kycStep = 1;
+      ctx.methods.forEach(m => m.failed = m.id === "mc");
       ctx.method = ctx.methods[0]; ctx.selected = null;
       document.querySelectorAll(".scenario").forEach(b => b.dataset.active = b.dataset.id === id);
       if (id === "timeout") { classify(null, CLASSIFY_TIMEOUT_MS); return; }
@@ -567,7 +676,7 @@
     // E1
     retry() {
       ctx.attempts++;
-      log("Retry attempt " + ctx.attempts + " with " + ctx.method.title);
+      log("Retry attempt " + ctx.attempts + " with " + ctx.method.alert);
       classify(e1, 900); // transient declines keep failing in this demo
     },
 
@@ -579,24 +688,21 @@
       const m = ctx.methods.find(x => x.id === ctx.selected);
       ctx.method = m;
       ctx.attempts = 0; // counter resets on method change (TBD assumption, documented)
-      exit("Back at review", "Method switched to " + m.title + ". Amount and recipient unchanged — the flow was never restarted.");
+      exit("Back at review", "Method switched to " + m.desc + ". Amount and recipient unchanged — the flow was never restarted.");
     },
 
     // E5
     setAmount(v) { ctx.amount = v; e5(ctx.scenario === "limit"); },
     amountInput(v) {
       const n = parseFloat(v.replace(/[^0-9.]/g, ""));
-      if (!isNaN(n)) ctx.amount = n;
-      if (ctx.scenario === "limit") {
-        // live re-validate without re-rendering the whole screen
-        const over = ctx.amount - ctx.available;
-        const box = document.querySelector(".amount-box");
-        const cta = document.querySelector(".footer .fx-btn--primary");
-        if (box && cta) {
-          box.classList.toggle("amount-box--error", over > 0);
-          box.querySelector("input").style.color = over > 0 ? "#a03808" : "#082422";
-          cta.disabled = over > 0;
-        }
+      ctx.amount = isNaN(n) ? 0 : n;
+      // Live re-validate without re-rendering (which would drop the caret).
+      const over  = ctx.amount - ctx.available;
+      const field = document.querySelector(".amt-field");
+      const cta   = document.querySelector(".actions .fx-btn--primary");
+      if (field && cta) {
+        field.classList.toggle("amt-field--error", over > 0);
+        cta.disabled = over > 0;
       }
     },
     confirmAmount() {
@@ -611,7 +717,7 @@
 
     // E6
     kycStart() { ctx.kycStep = 1; e6b(); },
-    kycNext() { ctx.kycStep >= 3 ? e6c() : (ctx.kycStep++, e6b()); },
+    kycPass() { log("Identity confirmed"); e6c(); },
     kycLeave() { log("Left the capture flow"); e6d(); },
     kycFail() { log("Identity rejected the documents"); e6d(); },
     kycDefer() { exit("Payment saved as a draft", "The verification offer can be picked up later from the draft."); },
