@@ -1,0 +1,19 @@
+/* Félix — Webfonts. Plain (display) + Saans (UI). Source: PlainLTStd-Black.otf, SaansLTStd-*.otf */
+@font-face{font-family:"Plain-500";src:url("../assets/fonts/PlainLTStd-Black.otf") format("opentype");font-weight:800 900;font-display:swap}
+@font-face{font-family:"Saans-300";src:url("../assets/fonts/SaansLTStd-Light.otf") format("opentype");font-weight:300;font-display:swap}
+@font-face{font-family:"Saans-400";src:url("../assets/fonts/SaansLTStd-Regular.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Saans-500";src:url("../assets/fonts/SaansLTStd-SemiBold.otf") format("opentype");font-weight:500 700;font-display:swap}
+
+/* Convenience unified families (weight resolves to the nearest shipped face). */
+@font-face{font-family:"Saans";src:url("../assets/fonts/SaansLTStd-Light.otf") format("opentype");font-weight:300;font-display:swap}
+@font-face{font-family:"Saans";src:url("../assets/fonts/SaansLTStd-Regular.otf") format("opentype");font-weight:400;font-display:swap}
+@font-face{font-family:"Saans";src:url("../assets/fonts/SaansLTStd-SemiBold.otf") format("opentype");font-weight:500 700;font-display:swap}
+@font-face{font-family:"Plain";src:url("../assets/fonts/PlainLTStd-Black.otf") format("opentype");font-weight:800 900;font-display:swap}
+
+:root{
+  /* Semantic font stacks (match packages/ui theme). Saans does NOT ship a true Medium — 500 maps to SemiBold. */
+  --font-sans:"Saans","Saans-400","Inter",system-ui,-apple-system,sans-serif;
+  --font-heading:"Plain","Plain-500","Inter",system-ui,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --font-serif:var(--font-heading);
+}

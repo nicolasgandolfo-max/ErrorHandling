@@ -1,0 +1,8 @@
+/* Félix — Base element defaults. */
+*{box-sizing:border-box}
+body{font-family:var(--font-sans);color:var(--foreground);background:var(--background);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-heading)}
+button:not(:disabled),[role="button"]:not(:disabled){cursor:pointer}
+a{color:var(--link);text-decoration:none}
+a:hover{color:var(--turquoise-700)}
+::selection{background:rgba(43,242,241,0.28)}
